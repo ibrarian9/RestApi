@@ -5,6 +5,11 @@ import com.example.restapi.Repositories.HapeRepository;
 import com.example.restapi.Request.HapeReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -19,6 +24,10 @@ public class HapeServiceImpl implements HapeService {
     public Handphone saveHape(Handphone hape) {
         return this.repo.save(hape);
     }
+
+    @Override
+    public Handphone saveToDb(Handphone hape) { return this.repo.save(hape); }
+
 
     @Override
     public Handphone getById(int id) {
@@ -53,6 +62,4 @@ public class HapeServiceImpl implements HapeService {
     public List<Handphone> getAllHape() {
         return repo.findAll();
     }
-
-
 }

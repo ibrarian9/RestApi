@@ -33,14 +33,15 @@ public class Handphone {
     @Column(name = "tanggal_publish")
     public java.sql.Date publish;
 
-    @Column(nullable = true, length = 240)
+    @Lob
+    @Column(name = "foto", columnDefinition = "MEDIUMBLOB")
     public String foto;
 
-    @Transient
-    public String getPhotosImagePath(){
-        if (foto == null) return null;
-        return "uploads/" + id + "/" + foto;
-    }
+//    @Transient
+//    public String getPhotosImagePath(){
+//        if (foto == null) return null;
+//        return "uploads/" + id + "/" + foto;
+//    }
 
     public void setId(Integer id) {
         this.id = id;

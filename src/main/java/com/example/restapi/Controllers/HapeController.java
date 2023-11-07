@@ -2,18 +2,19 @@ package com.example.restapi.Controllers;
 
 import com.example.restapi.FileUploadUtil;
 import com.example.restapi.Models.Handphone;
+import com.example.restapi.Repositories.HapeRepository;
 import com.example.restapi.Request.HapeReq;
 import com.example.restapi.Service.HapeService;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 
 
@@ -40,6 +41,20 @@ public class HapeController {
         return "Berhasil Di Upload";
     }
 
+    @PostMapping(path = "/newAdd", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String saveToDB(@RequestParam("file") MultipartFile file, @ModelAttribute("handphone") Handphone hape) {
+        long millis = System.currentTimeMillis();
+        java.sql.Date date = new java.sql.Date(millis);
+        hape.setPublish(date);
+        try {
+            hape.setFoto(Base64.getEncoder().encodeToString(file.getBytes()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        hapeService.saveToDb(hape);
+        return "Data Berhasil Di Tambah";
+    }
+
 //    Edit Data By Id
     @PutMapping(path = "/edit/{id}")
     public ResponseEntity<Handphone> getHape(@PathVariable("id") int id, @RequestBody HapeReq req)  {
@@ -56,7 +71,7 @@ public class HapeController {
     }
 
 //    Tampil Senua data
-    @GetMapping(path = "/all")
+    @GetMapping(path = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Handphone>> semuaData(){
         List<Handphone> data = hapeService.getAllHape();
         return ResponseEntity.ok(data);
@@ -67,13 +82,5 @@ public class HapeController {
     public String hapusData(@PathVariable int id){
         this.hapeService.deleteById(id);
         return "Delete Berhasil";
-    }
-
-//    Get Data Photo
-    @GetMapping(path = "photo/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
-    public void photo(HttpServletResponse response) throws IOException {
-        response.setContentType("image/*");
-
-
     }
 }

@@ -26,10 +26,6 @@ public class HapeServiceImpl implements HapeService {
     }
 
     @Override
-    public Handphone saveToDb(Handphone hape) { return this.repo.save(hape); }
-
-
-    @Override
     public Handphone getById(int id) {
         Optional<Handphone> optional = repo.findById(id);
         Handphone handphone;

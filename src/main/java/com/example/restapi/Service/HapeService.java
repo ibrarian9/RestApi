@@ -9,7 +9,6 @@ import java.util.List;
 public interface HapeService {
 
     Handphone saveHape(Handphone hape);
-    Handphone saveToDb(Handphone hape);
     Handphone getById(int id);
     Handphone updateById(int id, HapeReq req);
     void deleteById(int id);

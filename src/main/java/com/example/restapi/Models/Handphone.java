@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.sql.Date;
-import java.sql.Timestamp;
 
 @Getter
 @Entity
@@ -31,17 +30,17 @@ public class Handphone {
     public String deskripsi;
 
     @Column(name = "tanggal_publish")
-    public java.sql.Date publish;
+    public Date publish;
 
     @Lob
-    @Column(name = "foto", columnDefinition = "MEDIUMBLOB")
+    @Column(name = "foto")
     public String foto;
 
-//    @Transient
-//    public String getPhotosImagePath(){
-//        if (foto == null) return null;
-//        return "uploads/" + id + "/" + foto;
-//    }
+    @Transient
+    public String getImagePath(){
+        if (foto == null) return null;
+        return "uploads/" + id + "/" + foto;
+    }
 
     public void setId(Integer id) {
         this.id = id;

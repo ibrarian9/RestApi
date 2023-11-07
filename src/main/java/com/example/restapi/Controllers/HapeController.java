@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Base64;
 import java.util.List;
 
@@ -30,29 +32,14 @@ public class HapeController {
     public String addNewHape(@ModelAttribute("handphone") Handphone hape,
                              @RequestParam("file") MultipartFile file) throws IOException {{
     }
-        long millis = System.currentTimeMillis();
-        java.sql.Date date = new java.sql.Date(millis);
+        LocalDate d = LocalDate.now();
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        hape.setPublish(Date.valueOf(d));
         hape.setFoto(fileName);
-        hape.setPublish(date);
         Handphone saveHape = hapeService.saveHape(hape);
         String uploadDir = "uploads/" + saveHape.getId();
         FileUploadUtil.saveFile(uploadDir, fileName, file);
         return "Berhasil Di Upload";
-    }
-
-    @PostMapping(path = "/newAdd", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String saveToDB(@RequestParam("file") MultipartFile file, @ModelAttribute("handphone") Handphone hape) {
-        long millis = System.currentTimeMillis();
-        java.sql.Date date = new java.sql.Date(millis);
-        hape.setPublish(date);
-        try {
-            hape.setFoto(Base64.getEncoder().encodeToString(file.getBytes()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        hapeService.saveToDb(hape);
-        return "Data Berhasil Di Tambah";
     }
 
 //    Edit Data By Id

@@ -1,0 +1,47 @@
+package com.example.restapi.Controllers;
+
+import com.example.restapi.JwtUtil;
+import com.example.restapi.Models.User;
+import com.example.restapi.Request.LoginReq;
+import com.example.restapi.Response.ErrorRes;
+import com.example.restapi.Response.LoginRes;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+@Controller
+@RequestMapping("/api/auth")
+public class AuthController {
+    private final AuthenticationManager authManager;
+    private JwtUtil jwtUtil;
+
+    public AuthController(AuthenticationManager authManager, JwtUtil jwtUtil) {
+        this.authManager = authManager;
+        this.jwtUtil = jwtUtil;
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/login")
+    public ResponseEntity login(@RequestBody LoginReq req){
+        try {
+            Authentication auth = authManager.authenticate(new UsernamePasswordAuthenticationToken(req.getEmail(), req.getPassword()));
+            String nama = auth.getName();
+            User user = new User(nama, "");
+            String token = jwtUtil.createToken(user);
+            LoginRes loginRes = new LoginRes(nama, token);
+
+            return ResponseEntity.ok(loginRes);
+        } catch (BadCredentialsException e){
+            ErrorRes res = new ErrorRes(HttpStatus.BAD_REQUEST, "Invalid username or password");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+        } catch (Exception e) {
+            ErrorRes res = new ErrorRes(HttpStatus.BAD_REQUEST, e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+        }
+    }
+}

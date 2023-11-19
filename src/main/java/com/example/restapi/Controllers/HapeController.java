@@ -2,26 +2,28 @@ package com.example.restapi.Controllers;
 
 import com.example.restapi.FileUploadUtil;
 import com.example.restapi.Models.Handphone;
-import com.example.restapi.Repositories.HapeRepository;
-import com.example.restapi.Request.HapeReq;
+import com.example.restapi.Response.ErrorRes;
 import com.example.restapi.Service.HapeService;
+import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.Base64;
 import java.util.List;
 
-
 @RestController
-@RequestMapping("/api/hape")
+@RequestMapping("/api/auth/hape")
 public class HapeController {
 
     @Autowired
@@ -37,16 +39,15 @@ public class HapeController {
         hape.setPublish(Date.valueOf(d));
         hape.setFoto(fileName);
         Handphone saveHape = hapeService.saveHape(hape);
-        String uploadDir = "uploads/" + saveHape.getId();
+        String uploadDir = "src/main/resources/uploads/" + saveHape.getId();
         FileUploadUtil.saveFile(uploadDir, fileName, file);
         return "Berhasil Di Upload";
     }
 
 //    Edit Data By Id
     @PutMapping(path = "/edit/{id}")
-    public ResponseEntity<Handphone> getHape(@PathVariable("id") int id, @RequestBody HapeReq req)  {
-        Handphone handphone = hapeService.updateById(id, req);
-        return ResponseEntity.ok(handphone);
+    public ResponseEntity<Handphone> getHape(@PathVariable("id") int id, @RequestBody Handphone req)  {
+        return hapeService.updateById(id, req);
     }
 
 //    Get Data By Id
@@ -60,8 +61,7 @@ public class HapeController {
 //    Tampil Senua data
     @GetMapping(path = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Handphone>> semuaData(){
-        List<Handphone> data = hapeService.getAllHape();
-        return ResponseEntity.ok(data);
+        return hapeService.getAllHape();
     }
 
 //    Delete Data By Id
@@ -69,5 +69,26 @@ public class HapeController {
     public String hapusData(@PathVariable int id){
         this.hapeService.deleteById(id);
         return "Delete Berhasil";
+    }
+
+//    Get Data Poto By Id
+    @RolesAllowed("ROLE_ADMIN")
+    @GetMapping(path = "/poto/{id}")
+    public ResponseEntity<?> getImage(@PathVariable("id") int id) {
+        try {
+            byte[] bytes;
+            Handphone hape = hapeService.getPotobyId(id);
+            var img = new ClassPathResource(hape.getImagePath());
+            bytes = StreamUtils.copyToByteArray(img.getInputStream());
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_JPEG)
+                    .body(bytes);
+        } catch (AccessDeniedException e){
+            ErrorRes res = new ErrorRes(HttpStatus.FORBIDDEN, e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(res);
+        } catch (Exception e){
+            ErrorRes res = new ErrorRes(HttpStatus.BAD_REQUEST, e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+        }
     }
 }

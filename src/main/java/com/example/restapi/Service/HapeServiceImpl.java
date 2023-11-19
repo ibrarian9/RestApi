@@ -3,13 +3,11 @@ package com.example.restapi.Service;
 import com.example.restapi.Models.Handphone;
 import com.example.restapi.Repositories.HapeRepository;
 import com.example.restapi.Request.HapeReq;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.Base64;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -38,15 +36,15 @@ public class HapeServiceImpl implements HapeService {
     }
 
     @Override
-    public Handphone updateById(int id, HapeReq req) {
-        Handphone hape = repo.findById(id).orElseThrow( ()-> new NoSuchElementException("Hape is Not Found"));
+    public ResponseEntity<Handphone> updateById(int id, Handphone req) {
+        Handphone hape = repo.findById(id).orElseThrow( ()-> new EntityNotFoundException("Hape is Not Found"));
         hape.setNama(req.getNama());
         hape.setMerk(req.getMerk());
         hape.setHarga(req.getHarga());
         hape.setKondisi(req.getKondisi());
         hape.setDeskripsi(req.getDeskripsi());
         hape = repo.save(hape);
-        return hape;
+        return ResponseEntity.ok(hape);
     }
 
     @Override
@@ -55,7 +53,19 @@ public class HapeServiceImpl implements HapeService {
     }
 
     @Override
-    public List<Handphone> getAllHape() {
-        return repo.findAll();
+    public ResponseEntity<List<Handphone>> getAllHape() {
+        return ResponseEntity.ok(repo.findAll());
+    }
+
+    @Override
+    public Handphone getPotobyId(int id) {
+        Optional<Handphone> optional = repo.findById(id);
+        Handphone hape;
+        if (optional.isPresent()){
+            hape = optional.get();
+        } else {
+            throw new RuntimeException(" Data Not Found For Id " + id);
+        }
+        return hape;
     }
 }

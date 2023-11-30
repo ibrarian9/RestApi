@@ -1,44 +1,64 @@
 package com.example.restapi.Service;
 
-import com.example.restapi.Models.Role;
 import com.example.restapi.Models.User;
+import lombok.Getter;
+import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class UserDetailsImpl implements UserDetails {
 
-    private final User user;
+    @Getter
+    private int id;
 
-    public UserDetailsImpl(User user) {
-        this.user = user;
+    private String username;
+
+    @Getter
+    private String email;
+    @JsonIgnore
+    private String password;
+
+    private Collection<? extends GrantedAuthority> authorities;
+
+    public UserDetailsImpl(int id, String username, String email, String password, Collection<? extends GrantedAuthority> authorities) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.authorities = authorities;
+    }
+
+    public static UserDetailsImpl build(User user) {
+        List<GrantedAuthority> auth = user.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName().name()))
+                .collect(Collectors.toList());
+
+        return new UserDetailsImpl(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getPassword(),
+                auth
+        );
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-
-        Set<Role> roles = user.getRoles();
-        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-
-        for (Role role : roles){
-            authorities.add(new SimpleGrantedAuthority(role.getName()));
-        }
         return authorities;
     }
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return username;
     }
 
     @Override
@@ -61,4 +81,13 @@ public class UserDetailsImpl implements UserDetails {
         return true;
     }
 
+    @Override
+    public boolean equals(Object o){
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        UserDetailsImpl user = (UserDetailsImpl) o;
+        return Objects.equals(id, user.id);
+    }
 }

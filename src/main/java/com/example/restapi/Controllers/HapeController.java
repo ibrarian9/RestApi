@@ -24,15 +24,18 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth/hape")
+@CrossOrigin(origins = "*")
 public class HapeController {
 
     @Autowired
     private HapeService hapeService;
 
 //  Tambah Data
+    @RolesAllowed("ROLE_ADMIN")
     @PostMapping(path = "/add", produces = MediaType.APPLICATION_JSON_VALUE)
     public String addNewHape(@ModelAttribute("handphone") Handphone hape,
-                             @RequestParam("file") MultipartFile file) throws IOException {{
+                             @RequestParam("file") MultipartFile file) throws
+            IOException {{
     }
         LocalDate d = LocalDate.now();
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
@@ -45,8 +48,10 @@ public class HapeController {
     }
 
 //    Edit Data By Id
+    @RolesAllowed("ROLE_ADMIN")
     @PutMapping(path = "/edit/{id}")
-    public ResponseEntity<Handphone> getHape(@PathVariable("id") int id, @RequestBody Handphone req)  {
+    public ResponseEntity<Handphone> getHape(@PathVariable("id") int id,
+                                             @RequestBody Handphone req)  {
         return hapeService.updateById(id, req);
     }
 
@@ -64,15 +69,17 @@ public class HapeController {
         return hapeService.getAllHape();
     }
 
+
 //    Delete Data By Id
+    @RolesAllowed("ROLE_ADMIN")
     @DeleteMapping("hapus/{id}")
-    public String hapusData(@PathVariable int id){
+    public ResponseEntity<?> hapusData(@PathVariable int id){
         this.hapeService.deleteById(id);
-        return "Delete Berhasil";
+        return ResponseEntity.ok("Data Berhasil dihapus");
     }
 
 //    Get Data Poto By Id
-    @RolesAllowed("ROLE_ADMIN")
+
     @GetMapping(path = "/poto/{id}")
     public ResponseEntity<?> getImage(@PathVariable("id") int id) {
         try {

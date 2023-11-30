@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 
 
+
 @Getter
 @Entity
 @Table(name = "roles")
@@ -13,9 +14,10 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private String name;
+    @Enumerated(EnumType.STRING)
+    private ERole name;
 
-    public Role(String name) {
+    public Role(ERole name) {
         this.name = name;
     }
 
@@ -23,16 +25,11 @@ public class Role {
 
     }
 
-    @Override
-    public String toString() {
-        return this.name;
-    }
-
     public void setId(int id) {
         this.id = id;
     }
 
-    public void setName(String name) {
+    public void setName(ERole name) {
         this.name = name;
     }
 }

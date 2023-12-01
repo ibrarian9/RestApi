@@ -60,12 +60,12 @@ public class SecurityConfig {
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers(HttpMethod.POST, "api/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "api/auth/loginn").permitAll()
-                        .requestMatchers(HttpMethod.GET, "api/auth/hape/all", "api/auth/hape/edit/**", "api/auth/hape/poto/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "api/auth/hape/add").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "api/auth/hape/edit/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "api/auth/hape/hapus/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "api/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "api/loginn").permitAll()
+                        .requestMatchers(HttpMethod.GET, "api/hape/all", "api/hape/edit/**", "api/hape/poto/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "api/hape/add").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "api/hape/edit/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "api/hape/hapus/**").hasRole("ADMIN")
                 );
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(authFilter(), UsernamePasswordAuthenticationFilter.class);

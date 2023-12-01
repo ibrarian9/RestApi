@@ -23,7 +23,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/auth/hape")
+@RequestMapping("/api/hape")
 @CrossOrigin(origins = "*")
 public class HapeController {
 

@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public class HapeReq {
     private String nama;
-    private String merk;
+    private String rilis;
     private String harga;
     private String kondisi;
     private String deskripsi;
@@ -14,9 +14,9 @@ public class HapeReq {
 
     }
 
-    public HapeReq(String nama, String merk, String harga, String kondisi, String deskripsi) {
+    public HapeReq(String nama, String rilis, String harga, String kondisi, String deskripsi) {
         this.nama = nama;
-        this.merk = merk;
+        this.rilis = rilis;
         this.harga = harga;
         this.kondisi = kondisi;
         this.deskripsi = deskripsi;
@@ -24,10 +24,6 @@ public class HapeReq {
 
     public void setNama(String nama) {
         this.nama = nama;
-    }
-
-    public void setMerk(String merk) {
-        this.merk = merk;
     }
 
     public void setHarga(String harga) {
@@ -40,5 +36,9 @@ public class HapeReq {
 
     public void setDeskripsi(String deskripsi) {
         this.deskripsi = deskripsi;
+    }
+
+    public void setRilis(String rilis) {
+        this.rilis = rilis;
     }
 }

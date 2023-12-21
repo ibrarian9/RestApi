@@ -2,16 +2,11 @@ package com.example.restapi.Models;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.*;
 
 @Getter
 @Entity
-@Table(name = "user")
-public class User {
+@Table(name = "user_login")
+public class userlogin {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,18 +19,13 @@ public class User {
     private String email;
     @Column(nullable = false)
     private String password;
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable( name = "user_roles",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "roles_id"))
-    private Set<Role> roles = new HashSet<>();
 
-    public User(String username, String password) {
+    public userlogin(String username, String password) {
         this.username = username;
         this.password = password;
     }
 
-    public User() {
+    public userlogin() {
 
     }
 
@@ -77,18 +67,6 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
-
-    public void addRole(Role role) {
-        this.roles.add(role);
     }
 
 }

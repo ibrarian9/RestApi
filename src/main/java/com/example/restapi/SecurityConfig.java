@@ -57,16 +57,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
-                .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers(HttpMethod.POST, "api/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "api/loginn").permitAll()
                         .requestMatchers(HttpMethod.GET, "api/hape/all", "api/hape/edit/**", "api/hape/poto/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "api/hape/add").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "api/hape/edit/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "api/hape/hapus/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "api/hape/add").permitAll()
+                        .requestMatchers(HttpMethod.POST, "api/hape/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "api/hape/edit/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "api/hape/hapus/**").permitAll()
+                        .anyRequest().permitAll()
                 );
+
+        http.exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
+                .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(authFilter(), UsernamePasswordAuthenticationFilter.class);
 

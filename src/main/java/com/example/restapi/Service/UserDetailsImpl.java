@@ -1,54 +1,43 @@
 package com.example.restapi.Service;
 
-import com.example.restapi.Models.User;
+import com.example.restapi.Models.userlogin;
 import lombok.Getter;
 import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class UserDetailsImpl implements UserDetails {
 
     @Getter
     private int id;
-
     private String username;
-
     @Getter
     private String email;
     @JsonIgnore
     private String password;
 
-    private Collection<? extends GrantedAuthority> authorities;
-
-    public UserDetailsImpl(int id, String username, String email, String password, Collection<? extends GrantedAuthority> authorities) {
+    public UserDetailsImpl(int id, String username, String email, String password) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
-        this.authorities = authorities;
     }
 
-    public static UserDetailsImpl build(User user) {
-        List<GrantedAuthority> auth = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName().name()))
-                .collect(Collectors.toList());
+    public static UserDetailsImpl build(userlogin userLogin) {
 
         return new UserDetailsImpl(
-                user.getId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getPassword(),
-                auth
+                userLogin.getId(),
+                userLogin.getUsername(),
+                userLogin.getEmail(),
+                userLogin.getPassword()
         );
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+        return null;
     }
 
     @Override

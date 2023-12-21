@@ -1,8 +1,8 @@
 package com.example.restapi.Repositories;
 
-import com.example.restapi.Models.Handphone;
+import com.example.restapi.Models.hp;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface HapeRepository extends JpaRepository<Handphone, Integer> {
+public interface HapeRepository extends JpaRepository<hp, Integer> {
 
 }

@@ -3,12 +3,10 @@ package com.example.restapi.Models;
 import jakarta.persistence.*;
 import lombok.Getter;
 
-import java.sql.Date;
-
 @Getter
 @Entity
-@Table(name = "handphone")
-public class Handphone {
+@Table(name = "hp")
+public class hp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -17,20 +15,14 @@ public class Handphone {
     @Column(name = "nama")
     public String nama;
 
-    @Column(name = "merk")
-    public String merk;
-
     @Column(name = "harga")
     public String harga;
-
-    @Column(name = "kondisi")
-    public String kondisi;
 
     @Column(name = "deskripsi")
     public String deskripsi;
 
-    @Column(name = "tanggal_publish")
-    public Date publish;
+    @Column(name = "tahun_rilis")
+    public String rilis;
 
     @Lob
     @Column(name = "foto")
@@ -50,16 +42,8 @@ public class Handphone {
         this.nama = nama;
     }
 
-    public void setMerk(String merk) {
-        this.merk = merk;
-    }
-
     public void setHarga(String harga) {
         this.harga = harga;
-    }
-
-    public void setKondisi(String kondisi) {
-        this.kondisi = kondisi;
     }
 
     public void setDeskripsi(String deskripsi) {
@@ -70,7 +54,7 @@ public class Handphone {
         this.foto = foto;
     }
 
-    public void setPublish(Date publish) {
-        this.publish = publish;
+    public void setRilis(String rilis) {
+        this.rilis = rilis;
     }
 }

@@ -2,8 +2,12 @@ package com.example.restapi.Controllers;
 
 import com.example.restapi.FileUploadUtil;
 import com.example.restapi.Models.hp;
+import com.example.restapi.Request.LoginReq;
 import com.example.restapi.Response.ErrorRes;
+import com.example.restapi.Response.JwtRes;
 import com.example.restapi.Service.HapeService;
+import com.example.restapi.Service.JwtService;
+import com.example.restapi.Service.UserDetailsImpl;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -11,6 +15,10 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -23,17 +31,45 @@ import java.util.List;
 
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8080"}, allowedHeaders = "/**")
 @RestController
-@RequestMapping("/api/hape")
-public class HapeController {
+@RequestMapping("/api")
+public class Sistem {
 
     @Autowired
     private HapeService hapeService;
+    @Autowired
+    private AuthenticationManager authManager;
+    @Autowired
+    JwtService jwtService;
 
     String path = "src/main/resources/";
 
+    //    Fitur Login
+    @PostMapping(value = "/login")
+    public ResponseEntity<?> Login(@RequestBody LoginReq loginReq) {
+        try {
+            Authentication auth = authManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginReq.getUsername(), loginReq.getPassword())
+            );
+
+            SecurityContextHolder.getContext().setAuthentication(auth);
+            String jwt = jwtService.generateJwtToken(auth);
+            UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
+
+            return ResponseEntity.ok(new JwtRes(jwt,
+                    userDetails.getId(),
+                    userDetails.getUsername(),
+                    userDetails.getEmail()
+            ));
+        } catch (Exception e) {
+            ErrorRes res = new ErrorRes(HttpStatus.BAD_REQUEST, e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+        }
+
+    }
+
 //  Tambah Data
-    @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> addNewHape(@ModelAttribute("handphone") hp hape,
+    @PostMapping(path = "hape/tambah", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> entriHp(@ModelAttribute("handphone") hp hape,
                              @RequestPart("file") MultipartFile file) {{
         }
         try {
@@ -55,31 +91,31 @@ public class HapeController {
     }
 
 //    Edit Data By Id
-    @PutMapping(path = "/edit/{id}")
-    public ResponseEntity<?> getHape(@PathVariable("id") int id,
+    @PutMapping(path = "hape/tampil/{id}")
+    public ResponseEntity<?> tampil(@PathVariable("id") int id,
                                       @ModelAttribute hp req)  {
         hapeService.updateById(id, req);
         return ResponseEntity.ok("Data Berhasil Di Ubah");
     }
 
 //    Get Data By Id
-    @GetMapping(path = "/edit/{id}",
+    @GetMapping(path = "hape/tampil/{id}",
                 produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<hp> editHape(@PathVariable("id") int id){
+    public ResponseEntity<hp> tampil(@PathVariable("id") int id){
          var data = hapeService.getById(id);
          return ResponseEntity.ok(data);
     }
 
 //    Tampil Senua data
-    @GetMapping(path = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<hp>> semuaData(){
+    @GetMapping(path = "hape/tampil", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<hp>> tampil(){
         return hapeService.getAllHape();
     }
 
 
     //    Delete Data By Id
-    @DeleteMapping("hapus/{id}")
-    public ResponseEntity<?> hapusData(@PathVariable int id) throws IOException {
+    @DeleteMapping("hape/hapus/{id}")
+    public ResponseEntity<?> hapus(@PathVariable int id) throws IOException {
             hp hape = hapeService.getById(id);
             String file = path + "uploads/" + hape.getId();
             File fileDel = new File(file);
@@ -91,7 +127,7 @@ public class HapeController {
     }
 
     //    Get Data Poto By Id
-    @GetMapping(path = "/poto/{id}")
+    @GetMapping(path = "hape/poto/{id}")
     public ResponseEntity<?> getImage(@PathVariable("id") int id) {
         try {
             byte[] bytes;

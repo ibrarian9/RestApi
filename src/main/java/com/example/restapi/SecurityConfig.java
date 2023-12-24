@@ -59,11 +59,10 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers(HttpMethod.POST, "api/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "api/loginn").permitAll()
-                        .requestMatchers(HttpMethod.GET, "api/hape/all", "api/hape/edit/**", "api/hape/poto/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "api/hape/add").permitAll()
+                        .requestMatchers(HttpMethod.GET, "api/hape/tampil", "api/hape/tampil/**", "api/hape/poto/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "api/hape/tambah").permitAll()
                         .requestMatchers(HttpMethod.POST, "api/hape/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "api/hape/edit/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "api/hape/tampil/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "api/hape/hapus/**").permitAll()
                         .anyRequest().permitAll()
                 );
